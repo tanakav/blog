@@ -10,6 +10,10 @@ class Post extends Model
     //
     protected $table = 'posts';
 
+    protected $fillable = [
+        'user',
+    ];
+
     protected function setTitleAttribute($title){
         $this->attributes['title'] = $title;
         $this->attributes['slug'] =  Str::slug($title);
@@ -17,12 +21,12 @@ class Post extends Model
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user','id');
+        return $this->belongsTo(User::class,'user_id','id');
     }
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class,'categories_posts','post','category');
+        return $this->belongsToMany(Category::class,'categories_posts','post_id','category_id');
     }
 
 }

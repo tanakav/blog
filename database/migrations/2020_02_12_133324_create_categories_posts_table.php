@@ -15,12 +15,12 @@ class CreateCategoriesPostsTable extends Migration
     {
         Schema::create('categories_posts', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('category');
-            $table->unsignedBigInteger('post');
+            $table->unsignedBigInteger('category_id');
+            $table->unsignedBigInteger('post_id');
             $table->timestamps();
 
-            $table->foreign('category')->references('id')->on('categories');
-            $table->foreign('post')->references('id')->on('posts');
+            $table->foreign('category_id')->references('id')->on('categories');
+            $table->foreign('post_id')->references('id')->on('posts');
         });
     }
 

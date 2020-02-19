@@ -2,11 +2,21 @@
 
 namespace App\Http\Controllers;
 
+use App\Category;
+use App\Http\Requests\StorePostRequest;
 use App\Post;
+use App\User;
 use Illuminate\Http\Request;
+use App\Traits\UpdatePost;
+use App\Traits\RegisterPost;
+use App\Traits\DeletePost;
 
 class PostController extends Controller
 {
+    use UpdatePost;
+    use RegisterPost;
+    use DeletePost;
+
     /**
      * Display a listing of the resource.
      *
@@ -15,7 +25,7 @@ class PostController extends Controller
     public function index()
     {
         //
-        $posts = Post::all();
+        $posts = Post::get();
 
         return view('posts',compact('posts'));
     }
@@ -28,6 +38,10 @@ class PostController extends Controller
     public function create()
     {
         //
+        $categories = Category::get();
+        $users = User::get();
+
+        return view('createPost',compact('categories','users'));
     }
 
     /**
@@ -36,9 +50,23 @@ class PostController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StorePostRequest $request)
     {
         //
+        // $validated = $request->validate();
+        // $post = new Post();
+        // $post->title = $request->title;
+        // $post->content = $request->content;
+        // $post->user()->associate(auth()->id());
+        // $post->save();
+
+        // $post->categories()->attach($request['post-categories']);
+
+        $post = $this->registerPost($request);
+        
+        
+        return redirect()->route('user.posts');
+        //return redirect()->route('post.show',$post);
     }
 
     /**
@@ -63,8 +91,10 @@ class PostController extends Controller
     public function edit(Post $post)
     {
         //
+        $all_categories = Category::get();
+        $post_categories = $post->categories()->get();
 
-        return view('edit',compact('post'));
+        return view('editPost',compact('post','all_categories','post_categories'));
     }
 
     /**
@@ -74,13 +104,11 @@ class PostController extends Controller
      * @param  \App\Post  $post
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Post $post)
+    public function update(StorePostRequest $request, Post $post)
     {
         //
-        $post->title =$request->title;
-        $post->content =$request->content;
-        $post->save();
-     
+        $post = $this->updatePost($request,$post);
+
         return redirect()->route('post.show',$post);
     }
 
@@ -93,8 +121,10 @@ class PostController extends Controller
     public function destroy(Post $post)
     {
         //
-        $post->categories()->detach();
-        $post->delete();
+        // $post->categories()->detach();
+        // $post->delete(); 
+        $this->deletePost($post);
+
         return redirect()->route('post.index');
     }
 }
