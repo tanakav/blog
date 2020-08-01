@@ -3,30 +3,18 @@
 namespace App;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class Post extends Model
 {
     //
-    protected $table = 'posts';
-
-    protected $fillable = [
-        'user',
-    ];
-
-    protected function setTitleAttribute($title){
-        $this->attributes['title'] = $title;
-        $this->attributes['slug'] =  Str::slug($title);
-    }
 
     public function user()
     {
-        return $this->belongsTo(User::class,'user_id','id');
+        return $this->belongsTo(User::class);
     }
 
     public function categories()
     {
-        return $this->belongsToMany(Category::class,'categories_posts','post_id','category_id');
+        return $this->hasMany(Category::class);
     }
-
 }
